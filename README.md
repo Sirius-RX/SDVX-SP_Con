@@ -201,4 +201,4 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 
 
-## 另外PCB板上预留了3个RGB接针（PWM0，PWM1，PWM2），有需要的可以自己根据源代码框架进行RGB等效的制作！
+## 另外PCB板上预留了3个RGB接针（PWM0，PWM1，PWM2），有需要的可以自己根据源代码框架进行RGB灯效的制作！（做好了戳我，我也想白嫖）
