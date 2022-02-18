@@ -7,9 +7,17 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 
 
+
+
+
+
 # 特性(Features)
 
 - 后面有时间再回来加（
+
+
+
+
 
 
 
@@ -71,6 +79,10 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 
 
+
+
+
+
 # Hardware部分
 
 1. 下载嘉立创PCB下单助手（下载地址https://download.jlc.com/jlchelper/release/3.4.5/JLCPcAssit_setup_3.4.5.zip?pname=quote_order）
@@ -93,6 +105,10 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 
 
+
+
+
+
 # Software部分
 
 1. 下载WCHISPTool（下载链接 http://www.wch.cn/downloads/file/196.html?time=2022-02-17%2020:53:09&code=shmzR6M3qjlkc9WQuq9JnszYYzXa14gB9BgJpesf ）
@@ -108,6 +124,10 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 4. 点击下载
 
 4. 重新插拔供电线，或者按下SW_Rst后，打开系统设备管理器，观察设备中是否多出来了一个鼠标和键盘
+
+
+
+
 
 
 
