@@ -7,6 +7,12 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 
 
+# 特性(Features)
+
+- 后面有时间再回来加（
+
+
+
 # 需要的准备
 
 ### 手台核心部件
@@ -167,6 +173,12 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 
 
-#### 如果您需要一个音击或者IIDX手台的话，可以直接使用该方案中的代码和PCB板，只需要按自己所需要的数量进行接线和设计外壳即可！
 
-#### 另外PCB板上预留了3个RGB接针（PWM0，PWM1，PWM2），有需要的可以自己根据源代码框架进行RGB等效的制作！
+
+
+
+## 如果您需要一个音击或者IIDX手台的话，可以直接使用该方案中的代码和PCB板，只需要按自己所需要的数量进行接线和设计外壳即可！
+
+
+
+## 另外PCB板上预留了3个RGB接针（PWM0，PWM1，PWM2），有需要的可以自己根据源代码框架进行RGB等效的制作！
