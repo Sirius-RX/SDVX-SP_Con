@@ -53,7 +53,7 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
   1. 可以买压线钳自己压线[笔者做法，耗时费力]，但是编码器那边直接用压线钳压XH2.54头子就很方便；
   2. 找淘宝店定制，只需将4P XH2.54转插簧6.3转接线描述文字发给淘宝电商即可，但是编码器接线需要做其它处理，详见**组装部分/9.**，实物如下图
   
-  ![Cable](IMAGE\Cable.jpg)
+  ![Cable](IMAGE/Cable.jpg)
   
   
   
@@ -113,7 +113,7 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
   安装孔位示意如下
 
-  ![CAD_Assemble](IMAGE\CAD_Assemble.png)
+  ![CAD_Assemble](IMAGE/CAD_Assemble.png)
 
   
 
@@ -135,15 +135,15 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
   
   6. 将4P XH2.54转插簧6.3转接线插入PCB的A~K的任意槽中，如下图（图中的EC1与EC2口接上了，那两个接口是用来接编码器的，先无视它们）
   
-     ![Cable_PCB](IMAGE\Cable_PCB.jpg)
+     ![Cable_PCB](IMAGE/Cable_PCB.jpg)
      
   7. 将4P XH2.54转插簧6.3转接线插入微动和LED接口上，线序如下图，注意不要接错
   
-     ![Cable_Ordering](IMAGE\Cable_Ordering.png)
+     ![Cable_Ordering](IMAGE/Cable_Ordering.png)
      
      接好后如下图
      
-     ![Cable_Switch](IMAGE\Cable_Switch.jpg)
+     ![Cable_Switch](IMAGE/Cable_Switch.jpg)
   
   9. 编码器接线处理
   
@@ -153,7 +153,7 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
   
      编码器线序如下
      
-     ![Cable_Encoder](IMAGE\Cable_Encoder.png)
+     ![Cable_Encoder](IMAGE/Cable_Encoder.png)
      
   11. 将两个编码器对应的线插入到PCB中EC1，EC2接口，注意不要接错线
   
@@ -168,3 +168,5 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 
 #### 如果您需要一个音击或者IIDX手台的话，可以直接使用该方案中的代码和PCB板，只需要按自己所需要的数量进行接线和设计外壳即可！
+
+#### 另外PCB板上预留了3个RGB接针（PWM0，PWM1，PWM2），有需要的可以自己根据源代码框架进行RGB等效的制作！
