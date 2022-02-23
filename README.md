@@ -13,9 +13,11 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 # 特性(Features)
 
-- 后面有时间再回来加（
-
-
+- 较低的成本（我大概全加起来花了680，包括压线钳，当时CH557便宜，现在[2022/2/23]芯片慌特别严重，估计要涨）
+- 近乎最好的游戏体验（除了换三合按键，没有升级空间了）
+- 较轻的重量（没有称量设备，但是比源台那个铁疙瘩是轻了特别多）
+- 理论最快响应速度的按键（详情请见代码）
+- 在自制手台中杰出的体积控制（46X22X8.5cm；对比源台是49X22X6cm）
 
 
 
@@ -27,20 +29,30 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 - SDVX按键一套，包括：
   - 4x  BT（大-白色正方形按钮）
+  
   - 2x  FX（黑色长方形按钮）
+  
   - 1x  START键
-  注：购买按键的时候需要**保证按键加上微动的长度不超过60mm**，因为外壳内部空间的高度就是65mm，星韵按键正好可以塞进去
-- 7x  按键对应微动
-- 5x(最少，越多越好)  5V蓝色按键配件LED
-- 2x(最少，越多越好)  5V红色按键配件LED
-- 2x  编码器（单片机5V专用，正交型，即AB相输出）
+    注：购买按键的时候需要**保证按键加上微动的长度不超过60mm**，因为外壳内部空间的高度就是65mm，星韵按键正好可以塞进去
+  
+    链接：[【星韵】音律炫动 Sound Voltex SDVX 音击 维修 按钮 按键 DIY-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=611586858628&_u=n207q98786659d)
+  
+- 7x  按键对应微动  链接：[原装进口欧姆龙微动开关D2MV-01-1C1正品1C3小型限位行程开关超轻-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=575465816885&_u=n207q987866546)
+
+- 5x(最少，越多越好)  5V蓝色按键配件LED  链接：[24V大中小圆按键配件LED迷你灯-5V带灯按钮游戏机普通款12V灯泡-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=25422216606&_u=n207q98786c70a)
+
+- 2x(最少，越多越好)  5V红色按键配件LED  链接：[24V大中小圆按键配件LED迷你灯-5V带灯按钮游戏机普通款12V灯泡-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=25422216606&_u=n207q98786c70a)
+
+- 2x  编码器（单片机5V专用，正交型，即AB相输出）链接：[全新编码器脉冲型号齐ABABZ差分编码器旋转编码器直销定制编码器-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=640404233664&_u=n207q987860373)
+
+- 2x  编码器旋钮（30*25mm）  链接：[全铝旋钮 实心铝合金旋钮 胆机功放音量电位器旋钮齿帽 25mm 30mm-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=537307977071&_u=n207q987860a54)
 
 ### 外壳&安装
 
-- 1x  PVC 外壳（由6块面板构成，使用CADFiles文件夹下的CAD文件制作，推荐一家叫“多美歌广告的淘宝店”）
-- 20x(最少，越多越好)  25mm M5沉头自攻螺丝（用来安装外壳）
-- 6x(最少，越多越好)  16mm M5沉头螺丝（普通螺纹，用来安装编码器）
-- 4x(最少，越多越好)  3（螺纹直径mm）*7（六角长度 mm）+3（螺纹长度 mm）的铜柱（用来固定PCB）
+- 1x  PVC 外壳（由6块面板构成，使用CADFiles文件夹下的CAD文件制作，推荐一家叫“多美歌广告的淘宝店”）  链接：[pvc雪弗板立体广告字uv定制做亚克力水晶字招牌门头户外装饰创意-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=658262089977&_u=n207q98786d1a2)
+- 20x(最少，越多越好)  25mm M5沉头自攻螺丝（用来安装外壳）  链接：[促316不锈钢十字平头自攻螺丝钉沉头自攻丝木螺丝M2M2.6M3M4M5M6-tmall.com天猫](https://detail.tmall.com/item.htm?id=17087667260&spm=a1z09.2.0.0.7a892e8d3jQ369&_u=n207q9878652ab)
+- 6x(最少，越多越好)  16mm M5沉头螺丝（普通螺纹，用来安装编码器）  链接：[促平头螺丝304不锈钢沉头螺丝钉螺母配件大全螺栓M1M3M4M5M6M8M10-tmall.com天猫](https://detail.tmall.com/item.htm?id=15817242523&spm=a1z09.2.0.0.7a892e8d3jQ369&_u=n207q98786515a)
+- 4x(最少，越多越好)  3（螺纹直径mm）*7（六角长度 mm）+3（螺纹长度 mm）的铜柱（用来固定PCB）  链接：[促单头六角铜柱M3M4电脑主板六角隔离柱机箱螺柱螺丝M2M2.5+3+4+6-tmall.com天猫](https://detail.tmall.com/item.htm?id=17318980620&spm=a1z09.2.0.0.7a892e8d3jQ369&_u=n207q98786f661)
 - 4x(最少，越多越好)  5mm M3螺丝（普通螺纹，用来固定PCB）
 - 1x  502粘合剂（用来固定铜柱）
 - 1x  M3钻头（用来给铜柱固定位钻孔）
@@ -58,6 +70,8 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 - PCB需要的器件，详情参考表**Hardware/SPCon.pdf**第三页
 
+  ​	这里特别给一下轻触开关商品链接，那个不太好找：[GT-TC018A-H0375-L1_（G-Switch(品赞)）GT-TC018A-H0375-L1中文资料_价格_PDF手册-立创电子商城 (szlcsc.com)](https://item.szlcsc.com/1046870.html)
+
 - 1x  电烙铁
 
 - 7x(最少，越多越好)  4P XH2.54转插簧6.3转接线：
@@ -65,6 +79,11 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
   淘宝上没有卖现成的，有两种准备方法
 
   1. 可以买压线钳自己压线[笔者做法，耗时费力]，但是编码器那边直接用压线钳压XH2.54头子就很方便；
+  
+     ​	半成品线链接（6.3插簧 20cm 0.5平方 单头）：[现货2.8 4.8 6.3mm插簧端子带线加护套 插片公母线束加工冷压接线-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?id=529701497995&price=0.12-0.8&sourceType=item&sourceType=item&suid=7d38c0c9-1907-46f3-bbe1-27eaa50df3b6&ut_sk=1.YJqe7g0ggbIDAOwSCpGkBNtY_21646297_1645605925652.Copy.ShareGlobalNavigation_1&un=5f350e807737c1fbc5322979059ce0be&share_crt_v=1&un_site=0&spm=a2159r.13376460.0.0&tbSocialPopKey=shareItem&sp_tk=OGxaMzJWU1RLMmQ=&cpp=1&shareurl=true&short_name=h.fm79V3E&bxsign=scdU-7m2eWJct2Z1QWmw6HioXXEJn-vzk0UVyTZS_b6_ojJ5ZpPGkMRyAoPUN65qVvjarztG4gagFvl7-iKGHFQ0mcUKZAwnoNmQFKiamAk0m97achKlks7Qu4Ih-O2kD-awoFo0EecbNnByUv88YXLJQ&tk=8lZ32VSTK2d&app=chrome)
+  
+     ​	压线钳链接（SN-01BM）：[线割SN-2549/01BM杜邦1.25/PH2.0/XH2.54/5557汽车端子插簧压线钳-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.7a892e8d3jQ369&id=538370306938&_u=n207q98786dee1)
+  
   2. 找淘宝店定制，只需将4P XH2.54转插簧6.3转接线描述文字发给淘宝电商即可，但是编码器接线需要做其它处理，详见**组装部分/9.**，实物如下图
   
   ![Cable](IMAGE/Cable.jpg)
