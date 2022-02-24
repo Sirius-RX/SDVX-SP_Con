@@ -13,7 +13,7 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 # 特性(Features)
 
-- 较低的成本（我大概全加起来花了680，包括压线钳，当时CH557便宜，现在[2022/2/23]芯片慌特别严重，估计要涨）
+- 较低的成本（我大概全加起来花了680，包括压线钳）
 - 近乎最好的游戏体验（除了换三合按键，没有升级空间了）
 - 较轻的重量（没有称量设备，但是比源台那个铁疙瘩是轻了特别多）
 - 理论最快响应速度的按键（详情请见代码）
@@ -70,7 +70,11 @@ An Arcade PC Controller for SDVX. At the same time, the scheme is compatible wit
 
 - PCB需要的器件，详情参考表**Hardware/SPCon.pdf**第三页
 
-  ​	这里特别给一下轻触开关商品链接，那个不太好找：[GT-TC018A-H0375-L1_（G-Switch(品赞)）GT-TC018A-H0375-L1中文资料_价格_PDF手册-立创电子商城 (szlcsc.com)](https://item.szlcsc.com/1046870.html)
+  ​	这里特别给一下轻触开关和CH557商品链接，这两个不太好找：
+
+  ​	开关：[GT-TC018A-H0375-L1_（G-Switch(品赞)）GT-TC018A-H0375-L1中文资料_价格_PDF手册-立创电子商城 (szlcsc.com)](https://item.szlcsc.com/1046870.html)
+
+  ​	CH557Q：[8位增强型单片机: CH557-淘宝网 (taobao.com)](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-2002130774.9.36ad267auUZI8O&id=534290249622)
 
 - 1x  电烙铁
 
