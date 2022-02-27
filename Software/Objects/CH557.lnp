@@ -1,4 +1,5 @@
 ".\Objects\Debug.obj",
-".\Objects\CompositeKM.obj" 
+".\Objects\MouseKey.obj",
+".\Objects\HID_Main.obj" 
 TO ".\Objects\CH557" 
 PRINT(".\Listings\CH557.m51") RAMSIZE(256) 

@@ -1,9 +1,9 @@
-C51 COMPILER V9.60.0.0   DEBUG                                                             02/15/2022 13:52:48 PAGE 1   
+C51 COMPILER V9.60.0.0   DEBUG                                                             02/16/2022 11:15:16 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DEBUG
 OBJECT MODULE PLACED IN .\Objects\Debug.obj
-COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE main\Debug.C OPTIMIZE(8,SPEED) BROWSE INCDIR(.\ADC;.\DATAFLASH;.\Public;
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Code\Debug.C OPTIMIZE(8,SPEED) BROWSE INCDIR(.\ADC;.\DATAFLASH;.\Public;
                     -.\RGB;.\SPI;.\TIMER;.\TOUCHKEY;.\UART;.\USB\USB_LIB;.\USB\Host) DEFINE(DEBUG) DEBUG OBJECTEXTEND PRINT(.\Listings\Debug.
                     -lst) TABS(3) OBJECT(.\Objects\Debug.obj)
 
@@ -15,7 +15,7 @@ line level    source
    4          * Version            : V1.4
    5          * Date               : 2021/12/15
    6          * Description        : This file contains all the functions prototypes for UART
-   7          *                      Printf , Delay functions.                            
+   7          *                      Printf , Delay functions.
    8          *******************************************************************************/
    9          #include "Debug.H"
   10          
@@ -23,69 +23,69 @@ line level    source
   12          * Function Name  : CfgFsys
   13          * Description    : CH557Ê±ÖÓÑ¡ÔñºÍÅäÖÃº¯Êý,¸´Î»Ä¬ÈÏÊ¹ÓÃÄÚ²¿¾§Õñ£¬Fsys=12MHz£¬
   14          *                   FREQ_SYS¿ÉÒÔÍ¨¹ýCLOCK_CFGÅäÖÃµÃµ½£¬¹«Ê½ÈçÏÂ£º
-  15          *                   Fsys = (Fosc * 4/(CLOCK_CFG & MASK_SYS_CK_SEL);¾ßÌåÊ±ÖÓÐèÒª×Ô¼ºÅäÖÃ 
+  15          *                   Fsys = (Fosc * 4/(CLOCK_CFG & MASK_SYS_CK_SEL);¾ßÌåÊ±ÖÓÐèÒª×Ô¼ºÅäÖÃ
   16          * Input          : None
   17          * Return         : None
-  18          *******************************************************************************/ 
-  19          void CfgFsys(void)  
+  18          *******************************************************************************/
+  19          void CfgFsys(void)
   20          {
-  21   1      #if OSC_EN_XT  
-                 P7 = P7 & 0xF0 | 0x06;                      //Æô¶¯Íâ²¿¾§ÕñÇ°,P7.0´¦ÓÚµÍµçÆ½,P7.1´¦ÓÚÉÏÀ­×´Ì¬
-                 SAFE_MOD = 0x55;
-                 SAFE_MOD = 0xAA;
-                 CLOCK_CFG |= bOSC_EN_XT;                          //Ê¹ÄÜÍâ²¿¾§Õñ
-                 mDelaymS(10);
-                 SAFE_MOD = 0x55;
-                 SAFE_MOD = 0xAA;
-                 CLOCK_CFG &= ~bOSC_EN_INT;                        //¹Ø±ÕÄÚ²¿¾§Õñ 
-                 SAFE_MOD = 0x00;
-              #endif   
-  32   1         
-  33   1         SAFE_MOD = 0x55;
-  34   1         SAFE_MOD = 0xAA;
-  35   1      #if FREQ_SYS == 48000000   
-                 CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x07;  // 48MHz 
-                 
-              #endif   
-  39   1         
-  40   1      #if FREQ_SYS == 32000000   
-  41   1         CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x06;  // 32MHz 
-  42   1         
-  43   1      #endif
-  44   1         
-  45   1      #if FREQ_SYS == 24000000   
-                 CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x05;  // 24MHz 
-                 
-              #endif   
-  49   1      
-  50   1      #if FREQ_SYS == 16000000      
-                 CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x04;  // 16MHz
-                 
+  21   1      #if OSC_EN_XT
+                  P7 = P7 & 0xF0 | 0x06;                     //Æô¶¯Íâ²¿¾§ÕñÇ°,P7.0´¦ÓÚµÍµçÆ½,P7.1´¦ÓÚÉÏÀ­×´Ì¬
+                  SAFE_MOD = 0x55;
+                  SAFE_MOD = 0xAA;
+                  CLOCK_CFG |= bOSC_EN_XT;                          //Ê¹ÄÜÍâ²¿¾§Õñ
+                  mDelaymS(10);
+                  SAFE_MOD = 0x55;
+                  SAFE_MOD = 0xAA;
+                  CLOCK_CFG &= ~bOSC_EN_INT;                        //¹Ø±ÕÄÚ²¿¾§Õñ
+                  SAFE_MOD = 0x00;
               #endif
-C51 COMPILER V9.60.0.0   DEBUG                                                             02/15/2022 13:52:48 PAGE 2   
+  32   1      
+  33   1          SAFE_MOD = 0x55;
+  34   1          SAFE_MOD = 0xAA;
+  35   1      #if FREQ_SYS == 48000000
+  36   1          CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x07;  // 48MHz
+  37   1      
+  38   1      #endif
+  39   1      
+  40   1      #if FREQ_SYS == 32000000
+                  CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x06;  // 32MHz
+              
+              #endif
+  44   1      
+  45   1      #if FREQ_SYS == 24000000
+                  CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x05;  // 24MHz
+              
+              #endif
+  49   1      
+  50   1      #if FREQ_SYS == 16000000
+                  CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x04;  // 16MHz
+              
+              #endif
+C51 COMPILER V9.60.0.0   DEBUG                                                             02/16/2022 11:15:16 PAGE 2   
 
   54   1      
-  55   1      #if FREQ_SYS == 12000000      
-                 CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x03;  // 12MHz
-                 
-              #endif   
+  55   1      #if FREQ_SYS == 12000000
+                  CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x03;  // 12MHz
+              
+              #endif
   59   1      
-  60   1      #if FREQ_SYS == 3000000 
-                 CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x02;  // 3MHz
-                 
+  60   1      #if FREQ_SYS == 3000000
+                  CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x02;  // 3MHz
+              
               #endif
   64   1      
-  65   1      #if FREQ_SYS == 750000  
-                 CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x01;  // 750KHz
-                 
+  65   1      #if FREQ_SYS == 750000
+                  CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x01;  // 750KHz
+              
               #endif
   69   1      
-  70   1      #if FREQ_SYS == 187500  
-                 CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x00;  // 187.5KHz 
-                 
+  70   1      #if FREQ_SYS == 187500
+                  CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x00;  // 187.5KHz
+              
               #endif
   74   1      
-  75   1         SAFE_MOD = 0x00;
+  75   1          SAFE_MOD = 0x00;
   76   1      }
   77          
   78          /*******************************************************************************
@@ -93,144 +93,71 @@ line level    source
   80          * Description    : usÑÓÊ±º¯Êý£¬ÒÔuSÎªµ¥Î»ÑÓÊ±
   81          * Input          : n
   82          * Return         : None
-  83          *******************************************************************************/ 
-  84          void mDelayuS(UINT16 n)  
+  83          *******************************************************************************/
+  84          void mDelayuS(UINT16 n)
   85          {
   86   1      #ifdef   FREQ_SYS
   87   1      #if      FREQ_SYS <= 6000000
-                    n >>= 2;
+                  n >>= 2;
               #endif
   90   1      #if      FREQ_SYS <= 3000000
-                    n >>= 2;
+                  n >>= 2;
               #endif
   93   1      #if      FREQ_SYS <= 750000
-                    n >>= 4;
+                  n >>= 4;
               #endif
   96   1      #endif
-  97   1         while(n){  // total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
-  98   2            ++ SAFE_MOD;  // 2 Fsys cycles, for higher Fsys, add operation here
-  99   2      #ifdef   FREQ_SYS
- 100   2      #if      FREQ_SYS >= 14000000
- 101   2            ++ SAFE_MOD;
- 102   2      #endif
- 103   2      #if      FREQ_SYS >= 16000000
- 104   2            ++ SAFE_MOD;
- 105   2      #endif
- 106   2      #if      FREQ_SYS >= 18000000
- 107   2            ++ SAFE_MOD;
- 108   2      #endif
- 109   2      #if      FREQ_SYS >= 20000000
- 110   2            ++ SAFE_MOD;
- 111   2      #endif
- 112   2      #if      FREQ_SYS >= 22000000
- 113   2            ++ SAFE_MOD;
- 114   2      #endif
- 115   2      #if      FREQ_SYS >= 24000000
-C51 COMPILER V9.60.0.0   DEBUG                                                             02/15/2022 13:52:48 PAGE 3   
+  97   1          while(n)   // total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
+  98   1          {
+  99   2              ++ SAFE_MOD;  // 2 Fsys cycles, for higher Fsys, add operation here
+ 100   2      #ifdef   FREQ_SYS
+ 101   2      #if      FREQ_SYS >= 14000000
+ 102   2              ++ SAFE_MOD;
+ 103   2      #endif
+ 104   2      #if      FREQ_SYS >= 16000000
+ 105   2              ++ SAFE_MOD;
+ 106   2      #endif
+ 107   2      #if      FREQ_SYS >= 18000000
+ 108   2              ++ SAFE_MOD;
+ 109   2      #endif
+ 110   2      #if      FREQ_SYS >= 20000000
+ 111   2              ++ SAFE_MOD;
+ 112   2      #endif
+ 113   2      #if      FREQ_SYS >= 22000000
+ 114   2              ++ SAFE_MOD;
+ 115   2      #endif
+C51 COMPILER V9.60.0.0   DEBUG                                                             02/16/2022 11:15:16 PAGE 3   
 
- 116   2            ++ SAFE_MOD;
- 117   2      #endif
+ 116   2      #if      FREQ_SYS >= 24000000
+ 117   2              ++ SAFE_MOD;
  118   2      #endif
- 119   2            -- n;
- 120   2         }
- 121   1      }
- 122          
- 123          /*******************************************************************************
- 124          * Function Name  : mDelayms
- 125          * Description    : msÑÓÊ±º¯Êý£¬ÒÔmSÎªµ¥Î»ÑÓÊ±
- 126          * Input          : n
- 127          * Return         : None
- 128          *******************************************************************************/
- 129          void mDelaymS(UINT16 n)                                                    
- 130          {
- 131   1         while(n){
- 132   2            mDelayuS(1000);
- 133   2            -- n;
- 134   2         }
- 135   1      }                                         
- 136          
- 137          /*******************************************************************************
- 138          * Function Name  : mInitSTDIO
- 139          * Description    : CH557´®¿Ú0³õÊ¼»¯,Ä¬ÈÏÊ¹ÓÃT1×÷²¨ÌØÂÊ·¢ÉúÆ÷£¬Ò²¿ÉÊ¹ÓÃT2
- 140          *                   -T1×÷UART0µÄ²¨ÌØÂÊ·¢ÉúÆ÷£ºRCLK=0ÇÒTCLK=0
- 141          *                   -T2×÷UART0µÄ²¨ÌØÂÊ·¢ÉúÆ÷£ºRCLK=1»òTCLK=1               
- 142          * Input          : None
- 143          * Return         : None
- 144          *******************************************************************************/
- 145          void mInitSTDIO(void)
- 146          {
- 147   1         UINT32 x;
- 148   1         UINT8 x2; 
- 149   1      
- 150   1         /* ´®¿Ú0Ê¹ÓÃÄ£Ê½1 */
- 151   1         SM0 = 0;
- 152   1         SM1 = 1;
- 153   1         SM2 = 0;                                                                 
- 154   1         
- 155   1         /* Ê¹ÓÃTimer1×÷Îª²¨ÌØÂÊ·¢ÉúÆ÷ */
- 156   1         RCLK = 0;                                                                  //UART0½ÓÊÕÊ±ÖÓ
- 157   1         TCLK = 0;                                                                  //UART0·¢ËÍÊ±ÖÓ
- 158   1         
- 159   1         PCON |= SMOD;
- 160   1         x = 10 * FREQ_SYS / UART0_BUAD / 16;                                       //Èç¹û¸ü¸ÄÖ÷Æµ£¬×¢ÒâxµÄÖµ²»ÒªÒ
-             -ç³ö                            
- 161   1         x2 = x % 10;
- 162   1         x /= 10;
- 163   1         if(x2 >= 5) x++;                                                       //ËÄÉáÎåÈë
- 164   1      
- 165   1         TMOD = TMOD & ~ bT1_GATE & ~ bT1_CT & ~ MASK_T1_MOD | bT1_M1;              //0X20£¬Timer1×÷Îª8Î»×Ô¶¯ÖØÔØ¶
-             -¨Ê±Æ÷
- 166   1         T2MOD = T2MOD | bTMR_CLK | bT1_CLK;                                        //Timer1Ê±ÖÓÑ¡Ôñ
- 167   1         TH1 = 0-x;                                                                 //12MHz¾§Õñ,buad/12ÎªÊµ¼ÊÐèÉèÖ
-             -Ã²¨ÌØÂÊ
- 168   1         TR1 = 1;                                                                   //Æô¶¯¶¨Ê±Æ÷1
- 169   1         TI = 1;
- 170   1         REN = 1;                                                                   //´®¿Ú0½ÓÊÕÊ¹ÄÜ
- 171   1      }
- 172          
- 173          /*******************************************************************************
- 174          * Function Name  : CH557WDTModeSelect
-C51 COMPILER V9.60.0.0   DEBUG                                                             02/15/2022 13:52:48 PAGE 4   
-
- 175          * Description    : CH557¿´ÃÅ¹·Ä£Ê½Ñ¡Ôñ
- 176          * Input          : mode£º
- 177          *                   0£ºtimer
- 178          *                   1£ºwatchDog
- 179          * Return         : None
- 180          *******************************************************************************/
- 181          void CH557WDTModeSelect(UINT8 mode)
- 182          {
- 183   1         SAFE_MOD = 0x55;
- 184   1         SAFE_MOD = 0xaa;                                                             //½øÈë°²È«Ä£Ê½
- 185   1         if(mode){
- 186   2          GLOBAL_CFG |= bWDOG_EN;                                                    //Æô¶¯¿´ÃÅ¹·¸´Î»
- 187   2         }
- 188   1         else GLOBAL_CFG &= ~bWDOG_EN;                                               //Æô¶¯¿´ÃÅ¹·½ö½ö×÷Îª¶¨Ê±Æ÷
- 189   1         SAFE_MOD = 0x00;                                                             //ÍË³ö°²È«Ä£Ê½
- 190   1         WDOG_COUNT = 0;                                                              //¿´ÃÅ¹·¸³³õÖµ
- 191   1      }
- 192          
- 193          /*******************************************************************************
- 194          * Function Name  : CH557WDTFeed
- 195          * Description    : CH557¿´ÃÅ¹·Î¹¹·
- 196          *                  ¿´ÃÅ¹·¸´Î»Ê±¼ä(s) = (256-tim)/(Fsys/131072)
- 197          *                  00H(Fsys=12MHz)=2.8s
- 198          *                  80H(Fsys=12MHz)=1.4s
- 199          * Input          : tim£º¿´ÃÅ¹·¼ÆÊý¸³Öµ
- 200          * Return         : None
- 201          *******************************************************************************/
- 202          void CH557WDTFeed(UINT8 tim)
- 203          {
- 204   1         WDOG_COUNT = tim;                                                             //¿´ÃÅ¹·¼ÆÊýÆ÷¸³Öµ   
- 205   1      }
+ 119   2      #endif
+ 120   2              -- n;
+ 121   2          }
+ 122   1      }
+ 123          
+ 124          /*******************************************************************************
+ 125          * Function Name  : mDelayms
+ 126          * Description    : msÑÓÊ±º¯Êý£¬ÒÔmSÎªµ¥Î»ÑÓÊ±
+ 127          * Input          : n
+ 128          * Return         : None
+ 129          *******************************************************************************/
+ 130          void mDelaymS(UINT16 n)
+ 131          {
+ 132   1          while(n)
+ 133   1          {
+ 134   2              mDelayuS(1000);
+ 135   2              -- n;
+ 136   2          }
+ 137   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    213    ----
+   CODE SIZE        =     67    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       5
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

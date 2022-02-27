@@ -1,0 +1,703 @@
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE HID_MAIN
+OBJECT MODULE PLACED IN .\Objects\HID_Main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Code\HID_Main.C OPTIMIZE(8,SPEED) BROWSE INCDIR(.\ADC;.\DATAFLASH;.\Publ
+                    -ic;.\RGB;.\SPI;.\TIMER;.\TOUCHKEY;.\UART;.\USB\USB_LIB;.\USB\Host) DEFINE(DEBUG) DEBUG OBJECTEXTEND PRINT(.\Listings\HID
+                    -_Main.lst) TABS(3) OBJECT(.\Objects\HID_Main.obj)
+
+line level    source
+
+   1          /********************************** (C) COPYRIGHT *******************************
+   2          * File Name          : CompositeKM.C
+   3          * Author             : Sirius_P
+   4          * Version            : V1.1
+   5          * Date               : 2022/02/05
+   6          * Description        : CH557Ä£ÄâUSB¼üÊó¸´ºÏÉè±¸,Ö§³ÖÀàÃüÁî,Ö§³Ö»½ÐÑ
+   7                                 ÑÝÊ¾¼üÅÌÊó±ê¼òµ¥²Ù×÷¡£ÆäËû¼üÖµ£¬²Î¿¼ HID USAGE TABLEÐ­ÒéÎÄµµ
+   8                                 ÈÎÒâ×Ö·û£ºÖ÷»úË¯Ãß×´Ì¬ÏÂ,Éè±¸Ô¶³Ì»½ÐÑÖ÷»ú£¨×¢ÒâÉè±¸Ò»°ãÐè×Ô¹©µç,ÒòÎªÖ÷»úÐÝÃß¿ÉÄÜUSB¿ÚÒ²»áµôµç£©
+   9          *******************************************************************************/
+  10          #include "DEBUG.H"
+  11          #include "MouseKey.H"
+  12          
+  13          #define Fullspeed//È«ËÙUSBÄ£Ê½Ñ¡Ôñ£¬ÈçÊ¹ÓÃ°ëËÙÔò×¢ÊÍ
+  14          
+  15          #ifdef  Fullspeed
+  16          #define THIS_ENDP0_SIZE         64
+  17          #else
+              #define THIS_ENDP0_SIZE         8          //µÍËÙUSB£¬ÖÐ¶Ï´«Êä¡¢¿ØÖÆ´«Êä×î´ó°ü³¤¶ÈÎª8
+              #endif
+  20          
+  21          #define ENDP1_IN_SIZE           2          //¼üÅÌ¶ËµãÊý¾Ý°ü´óÐ¡
+  22          #define ENDP2_IN_SIZE           2          //Êó±ê¶ËµãÊý¾Ý°ü´óÐ¡
+  23          #define Sense                   1          //ÐýÅ¥ÁéÃô¶È
+  24          
+  25          UINT8X  Ep0Buffer[MIN(64, THIS_ENDP0_SIZE + 2)] _at_ 0x0000;                  //¶Ëµã0 OUT&IN»º³åÇø£¬±ØÐëÊÇ
+             -Å¼µØÖ·
+  26          UINT8X  Ep1Buffer[MIN(64, ENDP1_IN_SIZE)]     _at_ MIN(64, THIS_ENDP0_SIZE + 2); //¶Ëµã1 IN»º³åÇø,±ØÐëÊÇÅ¼
+             -µØÖ·
+  27          UINT8X  Ep2Buffer[MIN(64, ENDP2_IN_SIZE)]     _at_ (MIN(64, THIS_ENDP0_SIZE + 2) + MIN(64, ENDP1_IN_SIZE +
+             - 2)); //¶Ëµã2 IN»º³åÇø,±ØÐëÊÇÅ¼µØÖ·
+  28          
+  29          UINT8   SetupReq, Ready, UsbConfig;
+  30          
+  31          #define UsbSetupBuf     ((PUSB_SETUP_REQ)Ep0Buffer)
+  32          
+  33          #pragma NOAREGS
+  34          
+  35          /*Éè±¸ÃèÊö·û*/
+  36          UINT8C DevDesc[] =
+  37          {
+  38              0x12,                                  //bLength
+  39              0x01,                                  //bDescriptorType
+  40              0x10, 0x01,                            //bcdUSB
+  41              0x00,                                  //bDeviceClass
+  42              0x00,                                  //bDeviceSubClass
+  43              0x00,                                  //bDeviceProtocol
+  44              THIS_ENDP0_SIZE,                       //bMAXPacketSize0
+  45              0x86, 0x1a,                            //idVendor
+  46              0xe1, 0xe6,                            //idProduct
+  47              0x00, 0x01,                            //bcdDevice
+  48              0x01,                                  //iManufacturer
+  49              0x02,                                  //iProduct
+  50              0x00,                                  //iSerialNumber
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 2   
+
+  51              0x01                                   //bNumConfigurations
+  52          };
+  53          /*×Ö·û´®ÃèÊö·û*/
+  54          UINT8C  MyLangDescr[] = { 0x04, 0x03, 0x09, 0x04 };                                     // ÓïÑÔÃèÊö·û
+  55          UINT8C  MyManuInfo[] = { 0x0E, 0x03, 'S', 0, 'i', 0, 'r', 0, 'i', 0, 'u', 0, 's', 0 };  // ³§¼ÒÐÅÏ¢
+  56          UINT8C  MyProdInfo[] = { 0x0C, 0x03, 'S', 0, 'P', 0, 'C', 0, 'o', 0, 'n', 0 };          // ²úÆ·ÐÅÏ¢
+  57          /*HIDÀà±¨±íÃèÊö·û*/
+  58          UINT8C KeyRepDesc[] =
+  59          {
+  60              0x05, 0x01,                                        //Usage Page (Generic Desktop)
+  61              0x09, 0x06,                                        //Usage (Keyboard)
+  62              0xA1, 0x01,                                        //Collection (Application)
+  63              /*ÉÏ´«Êý¾Ý*/
+  64              //µÚ1-2×Ö½ÚÇ°3±ÈÌØ
+  65              0x05, 0x07,                                        //Usage Page (Keyboard/Keypad)
+  66              0x19, 0x04,                                        //Usage Minimum
+  67              0x29, 0x0E,                                        //Usage Maximum
+  68              0x15, 0x00,                                        //Logical Minimum
+  69              0x25, 0x01,                                        //Logical Maximum
+  70              0x95, 0x0B,                                        //Report Count
+  71              0x75, 0x01,                                        //Report Size
+  72              0x81, 0x02,                                        //Input (Data,Variable,Absolute)
+  73              //µÚ2×Ö½Úºó5±ÈÌØ
+  74              0x95, 0x05,                                        //Report Count
+  75              0x75, 0x01,                                        //Report Size
+  76              0x81, 0x01,                                        //Input (Constant)
+  77              0xC0                                               //End Collection
+  78          };
+  79          UINT8C MouseRepDesc[] =
+  80          {
+  81              0x05, 0x01,                                        //Usage Page (Generic Desktop)
+  82              0x09, 0x02,                                        //Usage (Mouse)
+  83              0xA1, 0x01,                                        //Collection (Application)
+  84              /*ÉÏ´«Êý¾Ý*/
+  85              //µÚ1-2×Ö½Ú
+  86              0x05, 0x01,                                        //Usage Page (Generic Desktop)
+  87              0x09, 0x30,                                        //Local X
+  88              0x09, 0x31,                                        //Local Y
+  89              0x15, 0x81,                                        //Logical Minimum
+  90              0x25, 0x7f,                                        //Logical Maximum
+  91              0x95, 0x02,                                        //Report Count
+  92              0x75, 0x08,                                        //Report Size
+  93              0x81, 0x06,                                        //Input (Data,Variable,Relative)
+  94              0xC0                                               //End Collection
+  95          };
+  96          /*ÅäÖÃÃèÊö·û*/
+  97          UINT8C CfgDesc[] =
+  98          {
+  99              /*ÅäÖÃÃèÊö·û*/
+ 100              0x09,                                              //bLength
+ 101              0x02,                                              //bDescroptorType
+ 102              0x3b, 0x00,                                        //wTotalLength
+ 103              0x02,                                              //bNumInterfaces
+ 104              0x01,                                              //bConfigurationValue
+ 105              0x00,                                              //iConfiguration
+ 106              0xA0,                                              //bmAttributes
+ 107              0x96,                                              //MaxPower
+ 108          
+ 109              /*½Ó¿ÚÃèÊö·û£¬¼üÅÌ¹¦ÄÜ*/
+ 110              0x09,                                              //bLength
+ 111              0x04,                                              //bDescriptorType
+ 112              0x00,                                              //bInterfaceNumber
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 3   
+
+ 113              0x00,                                              //bAlternateSetting
+ 114              0x01,                                              //bNumEndpoints
+ 115              0x03,                                              //bInterfaceClass
+ 116              0x01,                                              //bInterfaceSubClass
+ 117              0x01,                                              //bInterfaceProtocol
+ 118              0x00,                                              //iInterface
+ 119              /*HIDÀàÃèÊö·û*/
+ 120              0x09,                                              //bLength
+ 121              0x21,                                              //bDescriptorType
+ 122              0x11, 0x01,                                        //bcdHID
+ 123              0x00,                                              //bCountryCode
+ 124              0x01,                                              //bNumDescriptors
+ 125              0x22,                                              //DescriptorType
+ 126              sizeof(KeyRepDesc) & 0xFF, sizeof(KeyRepDesc) >> 8, //wDescriptorLength
+ 127              /*¶ËµãÃèÊö·û*/
+ 128              0x07,                                              //bLength
+ 129              0x05,                                              //bDescriptorType
+ 130              0x81,                                              //bEndpointAddress
+ 131              0x03,                                              //bmAttributes
+ 132              ENDP1_IN_SIZE, 0x00,                               //wMaxPacketSize
+ 133              0x0a,                                              //bInterval,ms
+ 134              
+ 135              /*½Ó¿ÚÃèÊö·û£¬Êó±ê¹¦ÄÜ*/
+ 136              0x09,                                              //bLength
+ 137              0x04,                                              //bDescriptorType
+ 138              0x01,                                              //bInterfaceNumber
+ 139              0x00,                                              //bAlternateSetting
+ 140              0x01,                                              //bNumEndpoints
+ 141              0x03,                                              //bInterfaceClass
+ 142              0x01,                                              //bInterfaceSubClass
+ 143              0x02,                                              //bInterfaceProtocol
+ 144              0x00,                                              //iInterface
+ 145              /*HIDÀàÃèÊö·û*/
+ 146              0x09,                                              //bLength
+ 147              0x21,                                              //bDescriptorType
+ 148              0x10, 0x01,                                        //bcdHID
+ 149              0x00,                                              //bCountryCode
+ 150              0x01,                                              //bNumDescriptors
+ 151              0x22,                                              //DescriptorType
+ 152              sizeof(MouseRepDesc) & 0xFF, sizeof(MouseRepDesc) >> 8, //wDescriptorLength
+ 153              /*¶ËµãÃèÊö·û*/
+ 154              0x07,                                              //bLength
+ 155              0x05,                                              //bDescriptorType
+ 156              0x82,                                              //bEndpointAddress
+ 157              0x03,                                              //bmAttributes
+ 158              ENDP2_IN_SIZE, 0x00,                               //wMaxPacketSize
+ 159              0x0a                                               //bInterval,ms
+ 160          };
+ 161          /*¼üÅÌÊý¾Ý*/
+ 162          UINT8 HIDKey[ENDP1_IN_SIZE];
+ 163          /*Êó±êÊý¾Ý*/
+ 164          UINT8 HIDMouse[2] = { 0x0, 0x0 };
+ 165          UINT8 Endp1Busy = 0;                                  //´«ÊäÍê³É¿ØÖÆ±êÖ¾Î»
+ 166          UINT8 Endp2Busy = 0;
+ 167          UINT8 WakeUpEnFlag = 0;                               //Ô¶³Ì»½ÐÑÊ¹ÄÜ±êÖ¾
+ 168          
+ 169          /*******************************************************************************
+ 170          * Function Name  : Enp1IntIn
+ 171          * Description    : USBÉè±¸Ä£Ê½¶Ëµã1µÄÖÐ¶ÏÉÏ´«
+ 172          * Input          : *buf: ÉÏ´«Êý¾Ý
+ 173          *                  len:ÉÏ´«Êý¾Ý³¤¶È
+ 174          * Return         : None
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 4   
+
+ 175          *******************************************************************************/
+ 176          void Enp1IntIn( UINT8 *buf, UINT8 len )
+ 177          {
+ 178   1          memcpy( Ep1Buffer, buf, len );                                            //¼ÓÔØÉÏ´«Êý¾Ý
+ 179   1          UEP1_T_LEN = len;                                                         //ÉÏ´«Êý¾Ý³¤¶È
+ 180   1          UEP1_CTRL = UEP1_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_ACK;                 //ÓÐÊý¾ÝÊ±ÉÏ´«Êý¾Ý²¢Ó¦´ðACK
+ 181   1      }
+ 182          
+ 183          /*******************************************************************************
+ 184          * Function Name  : Enp2IntIn1
+ 185          * Description    : USBÉè±¸Ä£Ê½¶Ëµã2µÄÖÐ¶ÏÉÏ´«º¯Êý
+ 186          * Input          : *buf: ÉÏ´«Êý¾Ý
+ 187          *                  len:ÉÏ´«Êý¾Ý³¤¶È
+ 188          * Return         : None
+ 189          *******************************************************************************/
+ 190          void Enp2IntIn( UINT8 *buf, UINT8 len )
+ 191          {
+ 192   1          memcpy( Ep2Buffer, buf, len);                                             //¼ÓÔØÉÏ´«Êý¾Ý
+ 193   1          UEP2_T_LEN = len;                                                         //ÉÏ´«Êý¾Ý³¤¶È
+ 194   1          UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_ACK;                 //ÓÐÊý¾ÝÊ±ÉÏ´«Êý¾Ý²¢Ó¦´ðACK
+ 195   1      }
+ 196          
+ 197          /*******************************************************************************
+ 198          * Function Name  : USB_DeviceInterrupt
+ 199          * Description    : USBÖÐ¶Ï·þÎñ³ÌÐò
+ 200          * Input          : None
+ 201          * Return         : None
+ 202          *******************************************************************************/
+ 203          void  USB_DeviceInterrupt(void) interrupt INT_NO_USB using 1
+ 204          {
+ 205   1          UINT8   len;
+ 206   1          static  UINT8 SetupReqCode;
+ 207   1          static  UINT16 SetupLen;
+ 208   1          static  PUINT8   pDescr;
+ 209   1          if(UIF_TRANSFER)  // USB´«ÊäÍê³É
+ 210   1          {
+ 211   2      USB_DevIntNext:
+ 212   2              switch(USB_INT_ST & ( bUIS_SETUP_ACT | MASK_UIS_TOKEN | MASK_UIS_ENDP ))  //·ÖÎö²Ù×÷ÁîÅÆºÍ¶ËµãºÅ
+ 213   2              {
+ 214   3              case UIS_TOKEN_IN | 2:  // endpoint 2# ÅúÁ¿¶ËµãÉÏ´«
+ 215   3              case bUIS_SETUP_ACT | UIS_TOKEN_IN | 2:
+ 216   3                  UEP2_T_LEN = 0;                                                       //Ô¤Ê¹ÓÃ·¢ËÍ³¤¶ÈÒ»¶¨ÒªÇå
+             -¿Õ
+ 217   3                  UEP2_CTRL ^= bUEP_T_TOG;                                              //ÊÖ¶¯·­×ª
+ 218   3                  Endp2Busy = 0;                                                        
+ 219   3                  UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;             //Ä¬ÈÏÓ¦´ðNAK
+ 220   3                  break;                                                                
+ 221   3              case UIS_TOKEN_IN | 1:  // endpoint 1# ÖÐ¶Ï¶ËµãÉÏ´«                       
+ 222   3              case bUIS_SETUP_ACT | UIS_TOKEN_IN | 1:                                   
+ 223   3                  UEP1_T_LEN = 0;                                                       //Ô¤Ê¹ÓÃ·¢ËÍ³¤¶ÈÒ»¶¨ÒªÇå
+             -¿Õ
+ 224   3                  UEP1_CTRL ^= bUEP_T_TOG;                                              //ÊÖ¶¯·­×ª
+ 225   3                  Endp1Busy = 0;                                                        
+ 226   3                  UEP1_CTRL = UEP1_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;             //Ä¬ÈÏÓ¦´ðNAK
+ 227   3                  break;                                                                
+ 228   3              case UIS_TOKEN_IN | 0:  // endpoint 0# IN
+ 229   3              case bUIS_SETUP_ACT | UIS_TOKEN_IN | 0:
+ 230   3                  switch(SetupReqCode)
+ 231   3                  {
+ 232   4                  case USB_GET_DESCRIPTOR:
+ 233   4                      len = SetupLen >= THIS_ENDP0_SIZE ? THIS_ENDP0_SIZE : SetupLen;   //±¾´Î´«Êä³¤¶È
+ 234   4                      memcpy( Ep0Buffer, pDescr, len );  /* ¼ÓÔØÉÏ´«Êý¾Ý */
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 5   
+
+ 235   4                      SetupLen -= len;
+ 236   4                      pDescr += len;
+ 237   4                      UEP0_T_LEN = len;
+ 238   4                      UEP0_CTRL ^= bUEP_T_TOG;  // ·­×ª
+ 239   4                      break;
+ 240   4                  case USB_SET_ADDRESS:
+ 241   4                      USB_DEV_AD = USB_DEV_AD & bUDA_GP_BIT | SetupLen;
+ 242   4                      UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
+ 243   4                      break;
+ 244   4                  default:
+ 245   4                      UEP0_T_LEN = 0;  // ×´Ì¬½×¶ÎÍê³ÉÖÐ¶Ï»òÕßÊÇÇ¿ÖÆÉÏ´«0³¤¶ÈÊý¾Ý°ü½áÊø¿ØÖÆ´«Êä
+ 246   4                      UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
+ 247   4                      break;
+ 248   4                  }
+ 249   3                  break;
+ 250   3              case UIS_TOKEN_OUT | 0:  // endpoint 0# OUT
+ 251   3              case bUIS_SETUP_ACT | UIS_TOKEN_OUT | 0:
+ 252   3                  UEP0_CTRL ^= bUEP_R_TOG;                                      //Í¬²½±êÖ¾Î»·­×ª
+ 253   3                  break;
+ 254   3              default:
+ 255   3                  if ((USB_INT_ST & (bUIS_SETUP_ACT | MASK_UIS_TOKEN)) == (bUIS_SETUP_ACT | UIS_TOKEN_FREE))  //
+             - endpoint 0# SETUP
+ 256   3                  {
+ 257   4                      UEP0_CTRL = bUEP_R_TOG | bUEP_T_TOG | UEP_R_RES_ACK | UEP_T_RES_ACK;
+ 258   4                      SetupLen = ((UINT16)UsbSetupBuf->wLengthH << 8) + UsbSetupBuf->wLengthL;
+ 259   4                      len = 0;
+ 260   4                      SetupReqCode = UsbSetupBuf->bRequest;
+ 261   4                      if( UsbSetupBuf->wLengthH || SetupLen > 0x7F) SetupLen = 0x7F;  // ÏÞÖÆ×Ü³¤¶È
+ 262   4                      len = 0;  // Ä¬ÈÏÎª³É¹¦²¢ÇÒÉÏ´«0³¤¶È
+ 263   4                      if ((UsbSetupBuf->bRequestType & USB_REQ_TYP_MASK) != USB_REQ_TYP_STANDARD)
+ 264   4                      {
+ 265   5                          switch(SetupReqCode)
+ 266   5                          {
+ 267   6                          case 0x01://GetReport
+ 268   6                              break;
+ 269   6                          case 0x02://GetIdle
+ 270   6                              break;
+ 271   6                          case 0x03://GetProtocol
+ 272   6                              break;
+ 273   6                          case 0x09://SetReport
+ 274   6                              break;
+ 275   6                          case 0x0A://SetIdle
+ 276   6                              break;
+ 277   6                          case 0x0B://SetProtocol
+ 278   6                              break;
+ 279   6                          default:
+ 280   6                              len = 0xFFFF;                                  /*ÃüÁî²»Ö§³Ö*/
+ 281   6                              break;
+ 282   6                          }
+ 283   5                      }
+ 284   4                      else  // ±ê×¼ÇëÇó
+ 285   4                      {
+ 286   5                          switch(SetupReqCode)  // ÇëÇóÂë
+ 287   5                          {
+ 288   6                          case USB_GET_DESCRIPTOR:
+ 289   6                              switch(UsbSetupBuf->wValueH )
+ 290   6                              {
+ 291   7                              case 1:  // Éè±¸ÃèÊö·û
+ 292   7                                  pDescr = (PUINT8)( &DevDesc[0] );
+ 293   7                                  len = sizeof( DevDesc );
+ 294   7                                  break;
+ 295   7                              case 2:  // ÅäÖÃÃèÊö·û
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 6   
+
+ 296   7                                  pDescr = (PUINT8)( &CfgDesc[0] );
+ 297   7                                  len = sizeof( CfgDesc );
+ 298   7                                  break;
+ 299   7                              case 3:  // ×Ö·û´®ÃèÊö·û
+ 300   7                                  switch(UsbSetupBuf->wValueL)
+ 301   7                                  {
+ 302   8                                  case 1:
+ 303   8                                      pDescr = (PUINT8)( &MyManuInfo[0] );
+ 304   8                                      len = sizeof( MyManuInfo );
+ 305   8                                      break;
+ 306   8                                  case 2:
+ 307   8                                      pDescr = (PUINT8)( &MyProdInfo[0] );
+ 308   8                                      len = sizeof( MyProdInfo );
+ 309   8                                      break;
+ 310   8                                  case 0:
+ 311   8                                      pDescr = (PUINT8)( &MyLangDescr[0] );
+ 312   8                                      len = sizeof( MyLangDescr );
+ 313   8                                      break;
+ 314   8                                  default:
+ 315   8                                      len = 0xFF;  // ²»Ö§³ÖµÄ×Ö·û´®ÃèÊö·û
+ 316   8                                      break;
+ 317   8                                  }
+ 318   7                                  break;
+ 319   7                              case USB_DESCR_TYP_REPORT:
+ 320   7                                  if(UsbSetupBuf->wIndexL == 0)                   //½Ó¿Ú0±¨±íÃèÊö·û
+ 321   7                                  {
+ 322   8                                      pDescr = KeyRepDesc;                        //Êý¾Ý×¼±¸ÉÏ´«
+ 323   8                                      len = sizeof(KeyRepDesc);
+ 324   8                                  }
+ 325   7                                  else if(UsbSetupBuf->wIndexL == 1)              //½Ó¿Ú1±¨±íÃèÊö·û
+ 326   7                                  {
+ 327   8                                      pDescr = MouseRepDesc;                      //Êý¾Ý×¼±¸ÉÏ´«
+ 328   8                                      len = sizeof(MouseRepDesc);
+ 329   8                                  }
+ 330   7                                  else
+ 331   7                                  {
+ 332   8                                      len = 0xFFFF;                                 //±¾³ÌÐòÖ»ÓÐ2¸ö½Ó¿Ú£¬Õâ¾ä»°Õ
+             -ý³£²»¿ÉÄÜÖ´ÐÐ
+ 333   8                                  }
+ 334   7                                  break;
+ 335   7                              default:
+ 336   7                                  len = 0xFF;  // ²»Ö§³ÖµÄÃèÊö·ûÀàÐÍ
+ 337   7                                  break;
+ 338   7                              }
+ 339   6                              if(SetupLen > len) SetupLen = len;  // ÏÞÖÆ×Ü³¤¶È
+ 340   6                              len = SetupLen >= THIS_ENDP0_SIZE ? THIS_ENDP0_SIZE : SetupLen;  // ±¾´Î´«Êä³¤¶È
+ 341   6                              memcpy(Ep0Buffer, pDescr, len);  /* ¼ÓÔØÉÏ´«Êý¾Ý */
+ 342   6                              SetupLen -= len;
+ 343   6                              pDescr += len;
+ 344   6                              break;
+ 345   6                          case USB_SET_ADDRESS:
+ 346   6                              SetupLen = UsbSetupBuf->wValueL;  // ÔÝ´æUSBÉè±¸µØÖ·
+ 347   6                              break;
+ 348   6                          case USB_GET_CONFIGURATION:
+ 349   6                              Ep0Buffer[0] = UsbConfig;
+ 350   6                              if ( SetupLen >= 1 ) len = 1;
+ 351   6                              break;
+ 352   6                          case USB_SET_CONFIGURATION:
+ 353   6                              UsbConfig = UsbSetupBuf->wValueL;
+ 354   6                              if(UsbConfig)
+ 355   6                              {
+ 356   7                                  Ready = 1;                                                   //set configÃüÁîÒ
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 7   
+
+             -»°ã´ú±íusbÃ¶¾ÙÍê³ÉµÄ±êÖ¾
+ 357   7                              }
+ 358   6                              break;
+ 359   6                          case USB_CLEAR_FEATURE:
+ 360   6                              if ((UsbSetupBuf->bRequestType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP)  // ¶
+             -Ëµã
+ 361   6                              {
+ 362   7                                  switch(UsbSetupBuf->wIndexL)
+ 363   7                                  {
+ 364   8                                  case 0x82:
+ 365   8                                      UEP2_CTRL = UEP2_CTRL & ~ ( bUEP_T_TOG | MASK_UEP_T_RES ) | UEP_T_RES_NAK;
+ 366   8                                      break;
+ 367   8                                  case 0x02:
+ 368   8                                      UEP2_CTRL = UEP2_CTRL & ~ ( bUEP_R_TOG | MASK_UEP_R_RES ) | UEP_R_RES_ACK;
+ 369   8                                      break;
+ 370   8                                  case 0x81:
+ 371   8                                      UEP1_CTRL = UEP1_CTRL & ~ ( bUEP_T_TOG | MASK_UEP_T_RES ) | UEP_T_RES_NAK;
+ 372   8                                      break;
+ 373   8                                  case 0x01:
+ 374   8                                      UEP1_CTRL = UEP1_CTRL & ~ ( bUEP_R_TOG | MASK_UEP_R_RES ) | UEP_R_RES_ACK;
+ 375   8                                      break;
+ 376   8                                  default:
+ 377   8                                      len = 0xFF;  // ²»Ö§³ÖµÄ¶Ëµã
+ 378   8                                      break;
+ 379   8                                  }
+ 380   7                              }
+ 381   6                              else if((UsbSetupBuf->bRequestType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_DEVICE)
+             -// Éè±¸
+ 382   6                              {
+ 383   7                                  WakeUpEnFlag = 0;
+ 384   7                                  break;
+ 385   7                              }
+ 386   6                              else
+ 387   6                              {
+ 388   7                                  len = 0xFFFF;                                                // ²»ÊÇ¶Ëµã²»Ö§³Ö
+ 389   7                              }
+ 390   6                              break;
+ 391   6                          case USB_SET_FEATURE:                                               /* Set Feature */
+ 392   6                              if((UsbSetupBuf->bRequestType & 0x1F) == 0x00)                    /* ÉèÖÃÉè±¸ */
+ 393   6                              {
+ 394   7                                  if(((( UINT16 )UsbSetupBuf->wValueH << 8 ) | UsbSetupBuf->wValueL) == 0x01)
+ 395   7                                  {
+ 396   8                                      if(CfgDesc[ 7 ] & 0x20)
+ 397   8                                      {
+ 398   9                                          WakeUpEnFlag = 1;                                   /* ÉèÖÃ»½ÐÑÊ¹ÄÜ±êÖ
+             -¾ */
+ 399   9                                      }
+ 400   8                                      else
+ 401   8                                      {
+ 402   9                                          len = 0xFFFF;                                        /* ²Ù×÷Ê§°Ü */
+ 403   9                                      }
+ 404   8                                  }
+ 405   7                                  else
+ 406   7                                  {
+ 407   8                                      len = 0xFFFF;                                            /* ²Ù×÷Ê§°Ü */
+ 408   8                                  }
+ 409   7                              }
+ 410   6                              else if((UsbSetupBuf->bRequestType & 0x1F) == 0x02)        /* ÉèÖÃ¶Ëµã */
+ 411   6                              {
+ 412   7                                  if((((UINT16)UsbSetupBuf->wValueH << 8 ) | UsbSetupBuf->wValueL) == 0x00)
+ 413   7                                  {
+ 414   8                                      switch(((UINT16)UsbSetupBuf->wIndexH << 8) | UsbSetupBuf->wIndexL)
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 8   
+
+ 415   8                                      {
+ 416   9                                      case 0x82:
+ 417   9                                          UEP2_CTRL = UEP2_CTRL & (~bUEP_T_TOG) | UEP_T_RES_STALL;/* ÉèÖÃ¶Ëµã2 I
+             -N STALL */
+ 418   9                                          break;
+ 419   9                                      case 0x02:
+ 420   9                                          UEP2_CTRL = UEP2_CTRL & (~bUEP_R_TOG) | UEP_R_RES_STALL;/* ÉèÖÃ¶Ëµã2 O
+             -UT Stall */
+ 421   9                                          break;
+ 422   9                                      case 0x81:
+ 423   9                                          UEP1_CTRL = UEP1_CTRL & (~bUEP_T_TOG) | UEP_T_RES_STALL;/* ÉèÖÃ¶Ëµã1 I
+             -N STALL */
+ 424   9                                          break;
+ 425   9                                      default:
+ 426   9                                          len = 0xFFFF;                               //²Ù×÷Ê§°Ü
+ 427   9                                          break;
+ 428   9                                      }
+ 429   8                                  }
+ 430   7                                  else
+ 431   7                                  {
+ 432   8                                      len = 0xFFFF;                                   //²Ù×÷Ê§°Ü
+ 433   8                                  }
+ 434   7                              }
+ 435   6                              else
+ 436   6                              {
+ 437   7                                  len = 0xFFFF;                                      //²Ù×÷Ê§°Ü
+ 438   7                              }
+ 439   6                              break;
+ 440   6                          case USB_GET_INTERFACE:
+ 441   6                              Ep0Buffer[0] = 0x00;
+ 442   6                              if(SetupLen >= 1) len = 1;
+ 443   6                              break;
+ 444   6                          case USB_GET_STATUS:
+ 445   6                              Ep0Buffer[0] = 0x00;
+ 446   6                              Ep0Buffer[1] = 0x00;
+ 447   6                              if ( SetupLen >= 2 ) len = 2;
+ 448   6                              else len = SetupLen;
+ 449   6                              break;
+ 450   6                          default:
+ 451   6                              len = 0xFF;  // ²Ù×÷Ê§°Ü
+ 452   6                              break;
+ 453   6                          }
+ 454   5                      }
+ 455   4                      if(len == 0xFF)  // ²Ù×÷Ê§°Ü
+ 456   4                      {
+ 457   5                          SetupReqCode = 0xFF;
+ 458   5                          UEP0_CTRL = bUEP_R_TOG | bUEP_T_TOG | UEP_R_RES_STALL | UEP_T_RES_STALL;  // STALL
+ 459   5                      }
+ 460   4                      else if(len <= THIS_ENDP0_SIZE)  // ÉÏ´«Êý¾Ý»òÕß×´Ì¬½×¶Î·µ»Ø0³¤¶È°ü
+ 461   4                      {
+ 462   5                          UEP0_T_LEN = len;
+ 463   5                          UEP0_CTRL = bUEP_R_TOG | bUEP_T_TOG | UEP_R_RES_ACK | UEP_T_RES_ACK;  // Ä¬ÈÏÊý¾Ý°üÊÇD
+             -ATA1
+ 464   5                      }
+ 465   4                      else  // ÏÂ´«Êý¾Ý»òÆäËü
+ 466   4                      {
+ 467   5                          UEP0_T_LEN = 0;  // ËäÈ»ÉÐÎ´µ½×´Ì¬½×¶Î£¬µ«ÊÇÌáÇ°Ô¤ÖÃÉÏ´«0³¤¶ÈÊý¾Ý°üÒÔ·ÀÖ÷»úÌáÇ°½øÈë×´Ì
+             -¬½×¶Î
+ 468   5                          UEP0_CTRL = bUEP_R_TOG | bUEP_T_TOG | UEP_R_RES_ACK | UEP_T_RES_ACK;  // Ä¬ÈÏÊý¾Ý°üÊÇD
+             -ATA1
+ 469   5                      }
+ 470   4                      break;
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 9   
+
+ 471   4                  }
+ 472   3                  else
+ 473   3                  {
+ 474   4                      break;
+ 475   4                  }
+ 476   3              }
+ 477   2      
+ 478   2              UIF_TRANSFER = 0;  // ÇåÖÐ¶Ï±êÖ¾
+ 479   2          }
+ 480   1          else if(UIF_BUS_RST)  // USB×ÜÏß¸´Î»
+ 481   1          {
+ 482   2              UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
+ 483   2              UEP1_CTRL = UEP_T_RES_NAK;
+ 484   2              UEP2_CTRL = UEP_T_RES_NAK;
+ 485   2              USB_DEV_AD = 0x00;
+ 486   2              UIF_SUSPEND = 0;
+ 487   2              UIF_TRANSFER = 0;
+ 488   2              Ready = 0;
+ 489   2              UIF_BUS_RST = 0;                                                 //ÇåÖÐ¶Ï±êÖ¾
+ 490   2          }
+ 491   1          else if(UIF_SUSPEND)  // USB×ÜÏß¹ÒÆð/»½ÐÑÍê³É
+ 492   1          {
+ 493   2              UIF_SUSPEND = 0;
+ 494   2              if (USB_MIS_ST & bUMS_SUSPEND)  // ¹ÒÆð
+ 495   2              {
+ 496   3      
+ 497   3              }
+ 498   2              else  // »½ÐÑ
+ 499   2              {
+ 500   3      
+ 501   3              }
+ 502   2          }
+ 503   1          else  // ÒâÍâµÄÖÐ¶Ï,²»¿ÉÄÜ·¢ÉúµÄÇé¿ö
+ 504   1          {
+ 505   2              USB_INT_FG = 0xFF;  // ÇåÖÐ¶Ï±êÖ¾
+ 506   2          }
+ 507   1          if(UIF_TRANSFER) goto USB_DevIntNext;
+ 508   1      
+ 509   1      }
+ 510          
+ 511          /*******************************************************************************
+ 512          * Function Name  : InitUSB_Device
+ 513          * Description    : USBÉè±¸³õÊ¼»¯
+ 514          * Input          : None
+ 515          * Return         : None
+ 516          *******************************************************************************/
+ 517          void  InitUSB_Device(void)  // ³õÊ¼»¯USBÉè±¸
+ 518          {
+ 519   1          IE_USB = 0;
+ 520   1          USB_CTRL = 0x00;  // ÏÈÉè¶¨Ä£Ê½
+ 521   1          UEP1_T_LEN = 0;                                                            //Ô¤Ê¹ÓÃ·¢ËÍ³¤¶ÈÒ»¶¨ÒªÇå¿Õ
+ 522   1          UEP2_T_LEN = 0;                                                            //Ô¤Ê¹ÓÃ·¢ËÍ³¤¶ÈÒ»¶¨ÒªÇå¿Õ
+ 523   1          UEP4_1_MOD &= ~(bUEP4_RX_EN | bUEP4_TX_EN);                                //¶Ëµã0µ¥64×Ö½ÚÊÕ·¢»º³åÇø
+ 524   1          UEP4_1_MOD = UEP4_1_MOD & ~bUEP1_BUF_MOD | bUEP1_TX_EN;                    // ¶Ëµã1ÉÏ´«IN
+ 525   1          UEP2_3_MOD = UEP2_3_MOD & ~bUEP2_BUF_MOD | bUEP2_TX_EN;                    // ¶Ëµã2ÉÏ´«IN
+ 526   1          UEP0_DMA = Ep0Buffer;
+ 527   1          UEP1_DMA = Ep1Buffer;
+ 528   1          UEP2_DMA = Ep2Buffer;
+ 529   1          USB_DEV_AD = 0x00;
+ 530   1          UDEV_CTRL &= ~ bUD_PD_EN;  // ½ûÖ¹DP/DMÏÂÀ­µç×è
+ 531   1      
+ 532   1      #ifndef Fullspeed
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 10  
+
+                  UDEV_CTRL |= bUD_LOW_SPEED;                                                //Ñ¡ÔñµÍËÙ1.5MÄ£Ê½
+                  USB_CTRL |= bUC_LOW_SPEED;
+              #else
+ 536   1          UDEV_CTRL &= ~bUD_LOW_SPEED;                                               //Ñ¡ÔñÈ«ËÙ12MÄ£Ê½£¬Ä¬ÈÏ·½Ê½
+ 537   1          USB_CTRL &= ~bUC_LOW_SPEED;
+ 538   1      #endif
+ 539   1      
+ 540   1          USB_CTRL |= bUC_DEV_PU_EN | bUC_INT_BUSY;  // Æô¶¯USBÉè±¸¼°DMA£¬ÔÚÖÐ¶ÏÆÚ¼äÖÐ¶Ï±êÖ¾Î´Çå³ýÇ°×Ô¶¯·µ»ØNAK
+ 541   1          UDEV_CTRL |= bUD_PORT_EN;  // ÔÊÐíUSB¶Ë¿Ú
+ 542   1          USB_INT_FG = 0xFF;  // ÇåÖÐ¶Ï±êÖ¾
+ 543   1          USB_INT_EN = bUIE_SUSPEND | bUIE_TRANSFER | bUIE_BUS_RST;
+ 544   1          IE_USB = 1;
+ 545   1      }
+ 546          
+ 547          /*******************************************************************************
+ 548          * Function Name  : HIDValueHandle
+ 549          * Description    : HID¼üÖµ´¦Àí
+ 550          * Input          : None
+ 551          * Return         : None
+ 552          *******************************************************************************/
+ 553          void HIDValueHandle()
+ 554          {
+ 555   1          HIDKey[0] = P0;
+ 556   1          HIDKey[1] = P1;
+ 557   1          while( Endp1Busy )
+ 558   1          {
+ 559   2              ;    //Èç¹ûÃ¦£¨ÉÏÒ»°üÊý¾ÝÃ»ÓÐ´«ÉÏÈ¥£©£¬ÔòµÈ´ý¡£
+ 560   2          }
+ 561   1          Endp1Busy = 1;                                               //ÉèÖÃÎªÃ¦×´Ì¬
+ 562   1          Enp1IntIn(HIDKey, sizeof(HIDKey));
+ 563   1          if(HIDKey[0] != 0 || HIDKey[1] != 0)
+ 564   1          {
+ 565   2              while( Endp2Busy )
+ 566   2              {
+ 567   3                  ;    //Èç¹ûÃ¦£¨ÉÏÒ»°üÊý¾ÝÃ»ÓÐ´«ÉÏÈ¥£©£¬ÔòµÈ´ý¡£
+ 568   3              }
+ 569   2              Endp2Busy = 1;
+ 570   2              Enp2IntIn(HIDMouse, sizeof(HIDMouse));
+ 571   2              HIDMouse[0] = 0;
+ 572   2              HIDMouse[1] = 0;
+ 573   2          }
+ 574   1      }
+ 575          
+ 576          /*******************************************************************************
+ 577          * Function Name  : GPIO_STD0_ISR
+ 578          * Description    : INT0(P32) Òý½ÅÍâ²¿ÖÐ¶Ï·þÎñº¯Êý
+ 579          * Input          : None
+ 580          * Return         : None
+ 581          *******************************************************************************/
+ 582          void GPIO_STD0_ISR(void) interrupt INT_NO_INT0
+ 583          {
+ 584   1          if(P3_4)
+ 585   1          {
+ 586   2              HIDMouse[0] = HIDMouse[0] + Sense;
+ 587   2          }
+ 588   1          if(!P3_4)
+ 589   1          {
+ 590   2              HIDMouse[0] = HIDMouse[0] - Sense;
+ 591   2          }
+ 592   1      }
+ 593          
+ 594          /*******************************************************************************
+C51 COMPILER V9.60.0.0   HID_MAIN                                                          02/16/2022 11:15:16 PAGE 11  
+
+ 595          * Function Name  : GPIO_STD1_ISR
+ 596          * Description    : INT1(P33) Òý½ÅÍâ²¿ÖÐ¶Ï·þÎñº¯Êý
+ 597          * Input          : None
+ 598          * Return         : None
+ 599          *******************************************************************************/
+ 600          void GPIO_STD1_ISR(void) interrupt INT_NO_INT1
+ 601          {
+ 602   1          if(P3_5)
+ 603   1          {
+ 604   2              HIDMouse[1] = HIDMouse[1] + Sense;
+ 605   2          }
+ 606   1          if(!P3_5)
+ 607   1          {
+ 608   2              HIDMouse[1] = HIDMouse[1] - Sense;
+ 609   2          }
+ 610   1      }
+ 611          
+ 612          /*******************************************************************************
+ 613          * Function Name  : main
+ 614          * Description    : Main program
+ 615          * Input          : None
+ 616          * Return         : None
+ 617          *******************************************************************************/
+ 618          void main(void)
+ 619          {
+ 620   1          CfgFsys( );                                                           //CH557Ê±ÖÓÑ¡ÔñÅäÖÃ
+ 621   1          mDelaymS(20);                                                         //ÐÞ¸ÄÖ÷ÆµµÈ´ýÄÚ²¿¾§ÕñÎÈ¶¨,±Ø¼Ó
+ 622   1          GPIO_Init(PORT0, PIN0 | PIN1 | PIN2 | PIN3 | PIN4 | PIN5 | PIN6 | PIN7, MODE0);
+ 623   1          GPIO_Init(PORT1, PIN0 | PIN1 | PIN2, MODE0);
+ 624   1          GPIO_Init(PORT3, PIN2, MODE0);
+ 625   1          GPIO_Init(PORT3, PIN3, MODE0);
+ 626   1          GPIO_Init(PORT3, PIN4, MODE0);
+ 627   1          GPIO_Init(PORT3, PIN5, MODE0);
+ 628   1          GPIO_INT_Init((INT_INT0_L | INT_INT1_L), INT_EDGE, Enable);           //Íâ²¿ÖÐ¶ÏÅäÖÃINT0\INT1
+ 629   1          InitUSB_Device();                                                     //USBÉè±¸Ä£Ê½³õÊ¼»¯
+ 630   1          IP_EX = bIP_USB;                                                      //µ÷ÕûUSBÖÐ¶ÏÓÅÏÈ¼¶
+ 631   1          memset(HIDKey, 0, sizeof(HIDKey));                                    //Çå¿Õ»º³åÇø
+ 632   1          memset(HIDMouse, 0, sizeof(HIDMouse));
+ 633   1      
+ 634   1          while(1)
+ 635   1          {
+ 636   2              if(Ready)
+ 637   2              {
+ 638   3                  HIDValueHandle();
+ 639   3              }
+ 640   2          }
+ 641   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1391    ----
+   CONSTANT SIZE    =    159    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

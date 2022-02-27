@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>Target 1</TargetName>
+      <TargetName>CH557</TargetName>
       <ToolsetNumber>0x0</ToolsetNumber>
       <ToolsetName>MCS-51</ToolsetName>
       <uAC6>8</uAC6>
@@ -374,32 +374,47 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>main</GroupName>
+          <GroupName>Code</GroupName>
           <Files>
-            <File>
-              <FileName>Debug.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main\Debug.C</FilePath>
-            </File>
-            <File>
-              <FileName>CompositeKM.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main\CompositeKM.C</FilePath>
-            </File>
             <File>
               <FileName>CH557.H</FileName>
               <FileType>5</FileType>
-              <FilePath>.\main\CH557.H</FilePath>
+              <FilePath>.\Code\CH557.H</FilePath>
             </File>
             <File>
               <FileName>CH557X.H</FileName>
               <FileType>5</FileType>
-              <FilePath>.\main\CH557X.H</FilePath>
+              <FilePath>.\Code\CH557X.H</FilePath>
             </File>
             <File>
               <FileName>CH557.INC</FileName>
               <FileType>5</FileType>
-              <FilePath>.\main\CH557.INC</FilePath>
+              <FilePath>.\Code\CH557.INC</FilePath>
+            </File>
+            <File>
+              <FileName>Debug.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Code\Debug.C</FilePath>
+            </File>
+            <File>
+              <FileName>Debug.H</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Code\Debug.H</FilePath>
+            </File>
+            <File>
+              <FileName>MouseKey.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Code\MouseKey.C</FilePath>
+            </File>
+            <File>
+              <FileName>MouseKey.H</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Code\MouseKey.H</FilePath>
+            </File>
+            <File>
+              <FileName>HID_Main.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Code\HID_Main.C</FilePath>
             </File>
           </Files>
         </Group>

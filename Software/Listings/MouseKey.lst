@@ -1,0 +1,213 @@
+C51 COMPILER V9.60.0.0   MOUSEKEY                                                          02/16/2022 11:15:16 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MOUSEKEY
+OBJECT MODULE PLACED IN .\Objects\MouseKey.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Code\MouseKey.C OPTIMIZE(8,SPEED) BROWSE INCDIR(.\ADC;.\DATAFLASH;.\Publ
+                    -ic;.\RGB;.\SPI;.\TIMER;.\TOUCHKEY;.\UART;.\USB\USB_LIB;.\USB\Host) DEFINE(DEBUG) DEBUG OBJECTEXTEND PRINT(.\Listings\Mou
+                    -seKey.lst) TABS(3) OBJECT(.\Objects\MouseKey.obj)
+
+line level    source
+
+   1          /********************************** (C) COPYRIGHT *******************************
+   2          * File Name          : Mouse_Key.C
+   3          * Author             : Sirius_P
+   4          * Version            : V1.0
+   5          * Date               : 2022/02/011
+   6          * Description        : Ch557°´¼ü¼ì²âÒÔ¼°±àÂëÆ÷¼ì²â
+   7          *******************************************************************************/
+   8          #include "MouseKey.H"
+   9          
+  10          #pragma  NOAREGS
+  11          
+  12          /*******************************************************************************
+  13          * Function Name  : GPIO_Init
+  14          * Description    : GPIO¶Ë¿Ú³õÊ¼»¯º¯Êý
+  15          * Input          : PORTx:0~4
+  16          *                  PINx:Î»Óò,Ã¿¸öÎ»¶ÔÓ¦¸ÃPortµÄÒ»¸öÒý½Å
+  17          *                  MODEx:
+  18          *                        0:¸ß×èÊäÈëÄ£Ê½£¬Òý½ÅÃ»ÓÐÉÏÀ­µç×è
+  19          *                        1:ÍÆÍìÊä³öÄ£Ê½£¬¾ßÓÐ¶Ô³ÆÇý¶¯ÄÜÁ¦£¬¿ÉÒÔÊä³ö»òÕßÎüÊÕ½Ï´óµçÁ÷
+  20          *                        2:¿ªÂ©Êä³ö£¬Ö§³Ö¸ß×èÊäÈë£¬Òý½ÅÃ»ÓÐÉÏÀ­µç×è
+  21          *                        3:×¼Ë«ÏòÄ£Ê½(±ê×¼ 8051)£¬¿ªÂ©Êä³ö£¬Ö§³ÖÊäÈë£¬Òý½ÅÓÐÉÏÀ­µç×è(Ä¬ÈÏÄ£Ê½)
+  22          * Return         : None
+  23          *******************************************************************************/
+  24          void GPIO_Init(UINT8 PORTx, UINT8 PINx, UINT8 MODEx)
+  25          {
+  26   1          UINT8 Px_DIR_PU, Px_MOD_OC;
+  27   1      
+  28   1          switch(PORTx)                                       //¶Á³ö³õÊ¼Öµ
+  29   1          {
+  30   2          case PORT0:
+  31   2              Px_MOD_OC = P0_MOD_OC;
+  32   2              Px_DIR_PU = P0_DIR_PU;
+  33   2              break;
+  34   2          case PORT1:
+  35   2              Px_MOD_OC = P1_MOD_OC;
+  36   2              Px_DIR_PU = P1_DIR_PU;
+  37   2              break;
+  38   2          case PORT2:
+  39   2              Px_MOD_OC = P2_MOD_OC;
+  40   2              Px_DIR_PU = P2_DIR_PU;
+  41   2              break;
+  42   2          case PORT3:
+  43   2              Px_MOD_OC = P3_MOD_OC;
+  44   2              Px_DIR_PU = P3_DIR_PU;
+  45   2              break;
+  46   2          case PORT4:
+  47   2              Px_MOD_OC = P4_MOD_OC;
+  48   2              Px_DIR_PU = P4_DIR_PU;
+  49   2              break;
+  50   2          default :
+  51   2              break;
+  52   2          }
+  53   1      
+C51 COMPILER V9.60.0.0   MOUSEKEY                                                          02/16/2022 11:15:16 PAGE 2   
+
+  54   1          switch(MODEx)
+  55   1          {
+  56   2          case MODE0:                                           //¸ß×èÊäÈëÄ£Ê½£¬Òý½ÅÃ»ÓÐÉÏÀ­µç×è
+  57   2              Px_MOD_OC &= ~PINx;
+  58   2              Px_DIR_PU &= ~PINx;
+  59   2              break;
+  60   2          case MODE1:                                           //ÍÆÍìÊä³öÄ£Ê½£¬¾ßÓÐ¶Ô³ÆÇý¶¯ÄÜÁ¦£¬¿ÉÒÔÊä³ö»òÕßÎü
+             -ÊÕ½Ï´óµçÁ÷
+  61   2              Px_MOD_OC &= ~PINx;
+  62   2              Px_DIR_PU |= PINx;
+  63   2              break;
+  64   2          case MODE2:                                           //¿ªÂ©Êä³ö£¬Ö§³Ö¸ß×èÊäÈë£¬Òý½ÅÃ»ÓÐÉÏÀ­µç×è
+  65   2              Px_MOD_OC |= PINx;
+  66   2              Px_DIR_PU &= ~PINx;
+  67   2              break;
+  68   2          case MODE3:                                           //×¼Ë«ÏòÄ£Ê½(±ê×¼ 8051)£¬¿ªÂ©Êä³ö£¬Ö§³ÖÊäÈë£¬Òý½
+             -ÅÓÐÉÏÀ­µç×è
+  69   2              Px_MOD_OC |= PINx;
+  70   2              Px_DIR_PU |= PINx;
+  71   2              break;
+  72   2          default :
+  73   2              break;
+  74   2          }
+  75   1          switch(PORTx)                                         //»ØÐ´
+  76   1          {
+  77   2          case PORT0:
+  78   2              P0_MOD_OC = Px_MOD_OC;
+  79   2              P0_DIR_PU = Px_DIR_PU;
+  80   2              break;
+  81   2          case PORT1:
+  82   2              P1_MOD_OC = Px_MOD_OC;
+  83   2              P1_DIR_PU = Px_DIR_PU;
+  84   2              break;
+  85   2          case PORT2:
+  86   2              P2_MOD_OC = Px_MOD_OC;
+  87   2              P2_DIR_PU = Px_DIR_PU;
+  88   2              break;
+  89   2          case PORT3:
+  90   2              P3_MOD_OC = Px_MOD_OC;
+  91   2              P3_DIR_PU = Px_DIR_PU;
+  92   2              break;
+  93   2          case PORT4:
+  94   2              P4_MOD_OC = Px_MOD_OC;
+  95   2              P4_DIR_PU = Px_DIR_PU;
+  96   2              break;
+  97   2          default :
+  98   2              break;
+  99   2          }
+ 100   1      }
+ 101          
+ 102          /*******************************************************************************
+ 103          * Function Name  : GPIO_INT_Init
+ 104          * Description    : ¿ÉÉèÖÃ RXD1_L¡¢P15_L¡¢P14_L¡¢P03_L¡¢RXD0_L¡¢P0.0¡«P0.7¡¢P1.0¡«P1.3¡¢P2.0¡«P2.3¡¢P4.0¡«P
+             -4.7 À©Õ¹Òý½ÅµÄÍâ²¿ÖÐ¶Ï
+ 105          *                  Í¬Ê±»¹°üº¬¼æÈÝC51µÄ INT1_L¡¢INT0_L µÄÍâ²¿ÖÐ¶Ï´¥·¢
+ 106          *                  (RXD1_L¡¢RXD0_L¾ßÌåÊÇÄÄ¸öÒý½ÅÈ¡¾öÓÚÒý½ÅÊÇ·ñÓ³Éä)
+ 107          * Input          : IntSrc:¹²9¸öÍâ²¿ÖÐ¶Ï£¬°´Î»Óò±íÊ¾£¬¾ßÌå¶¨Òå¼ûGPIO.H
+ 108          *                  Mode£º0£ºµçÆ½Ä£Ê½   1£º±ßÑØÄ£Ê½ (×¢ÒâÀ©Õ¹Òý½ÅµÄÖÐ¶ÏÄ£Ê½ÊÇÍ³Ò»ÅäÖÃµÄ)
+ 109          *                  NewState£º0£º¹Ø±Õ¶ÔÓ¦Íâ²¿ÖÐ¶ÏÊ¹ÄÜ  1£º¿ªÆô¶ÔÓ¦Íâ²¿ÖÐ¶Ï
+ 110          * Return         : None
+ 111          *******************************************************************************/
+ 112          void GPIO_INT_Init( UINT16 IntSrc, UINT8 Mode, UINT8 NewState )
+C51 COMPILER V9.60.0.0   MOUSEKEY                                                          02/16/2022 11:15:16 PAGE 3   
+
+ 113          {
+ 114   1          /* ÖÐ¶Ï´¥·¢Ä£Ê½ÉèÖÃ */
+ 115   1          if(IntSrc & 0x7F || IntSrc & 0xF000)            //´æÔÚÀ©Õ¹ÖÐ¶Ï
+ 116   1          {
+ 117   2              SAFE_MOD = 0x55;                                    //½øÈë°²È«Ä£Ê½
+ 118   2              SAFE_MOD = 0xAA;
+ 119   2              if(Mode == INT_EDGE)                                //±ßÑØ´¥·¢Ä£Ê½
+ 120   2              {
+ 121   3                  GPIO_IE |= bIE_IO_EDGE;
+ 122   3              }
+ 123   2              else                                                //µçÆ½´¥·¢Ä£Ê½
+ 124   2              {
+ 125   3                  GPIO_IE &= ~bIE_IO_EDGE;
+ 126   3              }
+ 127   2      
+ 128   2          }
+ 129   1      
+ 130   1          if(IntSrc & INT_INT0_L)                         //´æÔÚÍâ²¿ÖÐ¶Ï0
+ 131   1          {
+ 132   2              IT0 = 1;
+ 133   2          }
+ 134   1          if(IntSrc & INT_INT1_L)                         //´æÔÚÍâ²¿ÖÐ¶Ï1
+ 135   1          {
+ 136   2              IT1 = 1;
+ 137   2          }
+ 138   1      
+ 139   1          SAFE_MOD = 0x55;                                    //½øÈë°²È«Ä£Ê½
+ 140   1          SAFE_MOD = 0xAA;
+ 141   1          /* ÖÐ¶ÏÊ¹ÄÜ×´Ì¬ */
+ 142   1          if(NewState == Enable)                              //¿ªÆôÍâ²¿ÖÐ¶Ï
+ 143   1          {
+ 144   2              GPIO_IE |= ((UINT8)IntSrc & 0x7F);
+ 145   2              if(IntSrc & INT_INT0_L)                         //´æÔÚÍâ²¿ÖÐ¶Ï0
+ 146   2              {
+ 147   3                  EX0 = 1;
+ 148   3              }
+ 149   2              if(IntSrc & INT_INT1_L)                         //´æÔÚÍâ²¿ÖÐ¶Ï1
+ 150   2              {
+ 151   3                  EX1 = 1;
+ 152   3              }
+ 153   2              if(IntSrc & 0xF000)
+ 154   2              {
+ 155   3                  IntSrc = IntSrc / 256;
+ 156   3                  PORT_CFG |= (UINT8)IntSrc & 0xFF;
+ 157   3              }
+ 158   2              IE_GPIO = 1;                                    //¿ªÆôÀ©Õ¹GPIOÖÐ¶Ï
+ 159   2              EA = 1;                                         //¿ªÆô×ÜÖÐ¶Ï
+ 160   2          }
+ 161   1          else                                               //¹Ø±Õ¶ÔÓ¦Íâ²¿ÖÐ¶Ï
+ 162   1          {
+ 163   2              GPIO_IE &= ~((UINT8)IntSrc & 0x7F);
+ 164   2              if(IntSrc & INT_INT0_L)                         //´æÔÚÍâ²¿ÖÐ¶Ï0
+ 165   2              {
+ 166   3                  EX0 = 0;
+ 167   3              }
+ 168   2              if(IntSrc & INT_INT1_L)                         //´æÔÚÍâ²¿ÖÐ¶Ï1
+ 169   2              {
+ 170   3                  EX1 = 0;
+ 171   3              }
+ 172   2              if(IntSrc & 0xF000)
+ 173   2              {
+ 174   3                  IntSrc = IntSrc / 256;
+C51 COMPILER V9.60.0.0   MOUSEKEY                                                          02/16/2022 11:15:16 PAGE 4   
+
+ 175   3                  PORT_CFG |= ~(UINT8)IntSrc & 0xFF;
+ 176   3              }
+ 177   2              IE_GPIO = 0;                                   //¹Ø±ÕÀ©Õ¹GPIOÖÐ¶Ï
+ 178   2          }
+ 179   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    305    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

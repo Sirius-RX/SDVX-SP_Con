@@ -1,0 +1,172 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              02/11/2022 11:08:07 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\Main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Code\Main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\ADC;.\DATAFLASH;.\Public;.
+                    -\RGB;.\SPI;.\TIMER;.\TOUCHKEY;.\UART;.\USB\USB_LIB;.\USB\Host) DEFINE(DEBUG) DEBUG OBJECTEXTEND PRINT(.\Listings\Main.ls
+                    -t) TABS(3) OBJECT(.\Objects\Main.obj)
+
+line level    source
+
+   1          #include "DEBUG.C"
+   2          #include "DEBUG.H"
+   3          #include "HID.C"
+*** ERROR C237 IN LINE 76 OF Code\DEBUG.C: 'CfgFsys': function already has a body
+*** ERROR C237 IN LINE 122 OF Code\DEBUG.C: '_mDelayuS': function already has a body
+*** ERROR C237 IN LINE 137 OF Code\DEBUG.C: '_mDelaymS': function already has a body
+*** ERROR C237 IN LINE 148 OF Code\DEBUG.C: 'CH557UART0Alter': function already has a body
+*** ERROR C237 IN LINE 184 OF Code\DEBUG.C: 'mInitSTDIO': function already has a body
+*** ERROR C237 IN LINE 197 OF Code\DEBUG.C: 'CH557UART0RcvByte': function already has a body
+*** ERROR C237 IN LINE 210 OF Code\DEBUG.C: '_CH557UART0SendByte': function already has a body
+*** ERROR C237 IN LINE 231 OF Code\DEBUG.C: '_CH557WDTModeSelect': function already has a body
+*** ERROR C237 IN LINE 245 OF Code\DEBUG.C: '_CH557WDTFeed': function already has a body
+*** ERROR C237 IN LINE 258 OF Code\DEBUG.C: 'CH557SoftReset': function already has a body
+*** ERROR C132 IN LINE 11 OF Code\HID.H: '_Enp1IntIn': not in formal parameter list
+*** ERROR C141 IN LINE 11 OF Code\HID.H: syntax error near 'void', expected ';'
+*** ERROR C132 IN LINE 12 OF Code\HID.H: '_Enp2IntIn': not in formal parameter list
+*** ERROR C141 IN LINE 12 OF Code\HID.H: syntax error near 'void', expected ';'
+*** ERROR C132 IN LINE 13 OF Code\HID.H: 'InitUSB_Device': not in formal parameter list
+*** ERROR C141 IN LINE 13 OF Code\HID.H: syntax error near 'void', expected ';'
+*** ERROR C132 IN LINE 18 OF Code\HID.C: 'HIDValueHandle': not in formal parameter list
+*** ERROR C141 IN LINE 18 OF Code\HID.C: syntax error near 'UINT8X', expected ';'
+*** ERROR C221 IN LINE 18 OF Code\HID.C: non-constant case/dim expression
+*** ERROR C132 IN LINE 18 OF Code\HID.C: 'Ep0Buffer': not in formal parameter list
+*** ERROR C221 IN LINE 19 OF Code\HID.C: non-constant case/dim expression
+*** ERROR C221 IN LINE 19 OF Code\HID.C: non-constant case/dim expression
+*** ERROR C132 IN LINE 19 OF Code\HID.C: 'Ep1Buffer': not in formal parameter list
+*** ERROR C221 IN LINE 20 OF Code\HID.C: non-constant case/dim expression
+*** ERROR C221 IN LINE 20 OF Code\HID.C: non-constant case/dim expression
+*** ERROR C132 IN LINE 20 OF Code\HID.C: 'Ep2Buffer': not in formal parameter list
+*** ERROR C132 IN LINE 22 OF Code\HID.C: 'SetupReq': not in formal parameter list
+*** ERROR C132 IN LINE 22 OF Code\HID.C: 'Ready': not in formal parameter list
+*** ERROR C132 IN LINE 22 OF Code\HID.C: 'UsbConfig': not in formal parameter list
+*** ERROR C244 IN LINE 29 OF Code\HID.C: 'DevDesc': can't initialize, bad type or class
+*** ERROR C132 IN LINE 45 OF Code\HID.C: 'DevDesc': not in formal parameter list
+*** ERROR C244 IN LINE 47 OF Code\HID.C: 'MyLangDescr': can't initialize, bad type or class
+*** ERROR C132 IN LINE 47 OF Code\HID.C: 'MyLangDescr': not in formal parameter list
+*** ERROR C244 IN LINE 48 OF Code\HID.C: 'MyManuInfo': can't initialize, bad type or class
+*** ERROR C132 IN LINE 48 OF Code\HID.C: 'MyManuInfo': not in formal parameter list
+*** ERROR C244 IN LINE 49 OF Code\HID.C: 'MyProdInfo': can't initialize, bad type or class
+*** ERROR C132 IN LINE 49 OF Code\HID.C: 'MyProdInfo': not in formal parameter list
+*** ERROR C244 IN LINE 51 OF Code\HID.C: 'KeyRepDesc': can't initialize, bad type or class
+*** ERROR C132 IN LINE 67 OF Code\HID.C: 'KeyRepDesc': not in formal parameter list
+*** ERROR C244 IN LINE 68 OF Code\HID.C: 'MouseRepDesc': can't initialize, bad type or class
+*** ERROR C132 IN LINE 84 OF Code\HID.C: 'MouseRepDesc': not in formal parameter list
+*** ERROR C244 IN LINE 86 OF Code\HID.C: 'CfgDesc': can't initialize, bad type or class
+*** ERROR C202 IN LINE 115 OF Code\HID.C: 'KeyRepDesc': undefined identifier
+*** ERROR C202 IN LINE 115 OF Code\HID.C: 'KeyRepDesc': undefined identifier
+*** ERROR C202 IN LINE 141 OF Code\HID.C: 'MouseRepDesc': undefined identifier
+*** ERROR C202 IN LINE 141 OF Code\HID.C: 'MouseRepDesc': undefined identifier
+*** ERROR C132 IN LINE 149 OF Code\HID.C: 'CfgDesc': not in formal parameter list
+*** ERROR C132 IN LINE 151 OF Code\HID.C: 'HIDKey': not in formal parameter list
+*** ERROR C132 IN LINE 153 OF Code\HID.C: 'HIDMouse': not in formal parameter list
+*** ERROR C244 IN LINE 154 OF Code\HID.C: 'Endp1Busy': can't initialize, bad type or class
+C51 COMPILER V9.60.0.0   MAIN                                                              02/11/2022 11:08:07 PAGE 2   
+
+*** ERROR C132 IN LINE 154 OF Code\HID.C: 'Endp1Busy': not in formal parameter list
+*** ERROR C244 IN LINE 155 OF Code\HID.C: 'Endp2Busy': can't initialize, bad type or class
+*** ERROR C132 IN LINE 155 OF Code\HID.C: 'Endp2Busy': not in formal parameter list
+*** ERROR C244 IN LINE 156 OF Code\HID.C: 'WakeUpEnFlag': can't initialize, bad type or class
+*** ERROR C132 IN LINE 156 OF Code\HID.C: 'WakeUpEnFlag': not in formal parameter list
+*** ERROR C132 IN LINE 165 OF Code\HID.C: 'CH557USBDevWakeup': not in formal parameter list
+*** ERROR C141 IN LINE 165 OF Code\HID.C: syntax error near '{', expected ';'
+*** ERROR C136 IN LINE 167 OF Code\HID.C: 'UDEV_CTRL': 'void' on variable
+*** ERROR C132 IN LINE 167 OF Code\HID.C: 'UDEV_CTRL': not in formal parameter list
+*** ERROR C132 IN LINE 168 OF Code\HID.C: 'mDelaymS': not in formal parameter list
+*** ERROR C132 IN LINE 169 OF Code\HID.C: 'UDEV_CTRL': not in formal parameter list
+*** ERROR C141 IN LINE 169 OF Code\HID.C: syntax error near '&=', expected ';'
+*** ERROR C132 IN LINE 185 OF Code\HID.C: '_Enp1IntIn': not in formal parameter list
+*** ERROR C141 IN LINE 185 OF Code\HID.C: syntax error near '{', expected ';'
+*** ERROR C132 IN LINE 186 OF Code\HID.C: '_memcpy': not in formal parameter list
+*** ERROR C244 IN LINE 187 OF Code\HID.C: 'UEP1_T_LEN': can't initialize, bad type or class
+*** ERROR C202 IN LINE 187 OF Code\HID.C: 'len': undefined identifier
+*** ERROR C132 IN LINE 187 OF Code\HID.C: 'UEP1_T_LEN': not in formal parameter list
+*** ERROR C244 IN LINE 188 OF Code\HID.C: 'UEP1_CTRL': can't initialize, bad type or class
+*** ERROR C132 IN LINE 188 OF Code\HID.C: 'UEP1_CTRL': not in formal parameter list
+*** ERROR C141 IN LINE 189 OF Code\HID.C: syntax error near '}', expected 'hdata'
+*** ERROR C202 IN LINE 199 OF Code\HID.C: 'Ep2Buffer': undefined identifier
+*** ERROR C202 IN LINE 224 OF Code\HID.C: 'Endp2Busy': undefined identifier
+*** ERROR C202 IN LINE 231 OF Code\HID.C: 'Endp1Busy': undefined identifier
+*** ERROR C202 IN LINE 240 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 265 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 267 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 268 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 270 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 296 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 299 OF Code\HID.C: 'DevDesc': undefined identifier
+*** ERROR C202 IN LINE 300 OF Code\HID.C: 'DevDesc': undefined identifier
+*** ERROR C202 IN LINE 303 OF Code\HID.C: 'CfgDesc': undefined identifier
+*** ERROR C202 IN LINE 304 OF Code\HID.C: 'CfgDesc': undefined identifier
+*** ERROR C202 IN LINE 307 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 310 OF Code\HID.C: 'MyManuInfo': undefined identifier
+*** ERROR C202 IN LINE 311 OF Code\HID.C: 'MyManuInfo': undefined identifier
+*** ERROR C202 IN LINE 314 OF Code\HID.C: 'MyProdInfo': undefined identifier
+*** ERROR C202 IN LINE 315 OF Code\HID.C: 'MyProdInfo': undefined identifier
+*** ERROR C202 IN LINE 318 OF Code\HID.C: 'MyLangDescr': undefined identifier
+*** ERROR C202 IN LINE 319 OF Code\HID.C: 'MyLangDescr': undefined identifier
+*** ERROR C202 IN LINE 327 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 329 OF Code\HID.C: 'KeyRepDesc': undefined identifier
+*** ERROR C202 IN LINE 330 OF Code\HID.C: 'KeyRepDesc': undefined identifier
+*** ERROR C202 IN LINE 332 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 334 OF Code\HID.C: 'MouseRepDesc': undefined identifier
+*** ERROR C202 IN LINE 335 OF Code\HID.C: 'MouseRepDesc': undefined identifier
+*** ERROR C202 IN LINE 348 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 353 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 356 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 360 OF Code\HID.C: 'UsbConfig': undefined identifier
+*** ERROR C202 IN LINE 361 OF Code\HID.C: 'UsbConfig': undefined identifier
+*** ERROR C202 IN LINE 366 OF Code\HID.C: 'Ready': undefined identifier
+*** ERROR C202 IN LINE 370 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 372 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 391 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 393 OF Code\HID.C: 'WakeUpEnFlag': undefined identifier
+*** ERROR C202 IN LINE 405 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 407 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 409 OF Code\HID.C: 'CfgDesc': undefined identifier
+*** ERROR C202 IN LINE 411 OF Code\HID.C: 'WakeUpEnFlag': undefined identifier
+*** ERROR C202 IN LINE 426 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+C51 COMPILER V9.60.0.0   MAIN                                                              02/11/2022 11:08:07 PAGE 3   
+
+*** ERROR C202 IN LINE 428 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 430 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 457 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 461 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 462 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 510 OF Code\HID.C: 'Ready': undefined identifier
+*** ERROR C202 IN LINE 551 OF Code\HID.C: 'Ep0Buffer': undefined identifier
+*** ERROR C202 IN LINE 552 OF Code\HID.C: 'Ep1Buffer': undefined identifier
+*** ERROR C202 IN LINE 553 OF Code\HID.C: 'Ep2Buffer': undefined identifier
+*** ERROR C202 IN LINE 585 OF Code\HID.C: 'WakeUpEnFlag': undefined identifier
+   4          #include "HID.H"
+   5          
+   6          /*******************************************************************************
+   7          * Function Name  : main
+   8          * Description    : Main program
+   9          * Input          : None
+  10          * Return         : None
+  11          *******************************************************************************/
+  12          void main(void)
+  13          {
+  14              CfgFsys( );                                                           //CH557时钟选择配置
+  15              mDelaymS(20);                                                         //修改主频等待内部晶振稳定,必加
+  16              #if UART_DEBUG
+  17                mInitSTDIO( );                                                        //串口0初始化
+  18                printf("KM Device start ...\n");
+  19              #endif
+  20              InitUSB_Device();                                                     //USB设备模式初始化
+  21              EA = 1;                                                               //允许单片机中断
+  22              memset(HIDKey, 0, sizeof(HIDKey));                                    //清空缓冲区
+  23              memset(HIDMouse, 0, sizeof(HIDMouse));
+  24          
+  25              while(1)
+  26              {
+  27                  if(Ready)
+  28                  {
+  29                      HIDValueHandle();                                               //串口0,程序会停在getkey函数等
+             -待接收一个字符
+  30                  }
+  31              }
+  32          }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  122 ERROR(S)

@@ -1,0 +1,1 @@
+"Code\CompositeKM.C" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\ADC;.\DATAFLASH;.\Public;.\RGB;.\SPI;.\TIMER;.\TOUCHKEY;.\UART;.\USB\USB_LIB;.\USB\Host) DEFINE (DEBUG) DEBUG OBJECTEXTEND PRINT(.\Listings\CompositeKM.lst) TABS (3) OBJECT(.\Objects\CompositeKM.obj)
